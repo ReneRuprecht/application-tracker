@@ -21,6 +21,16 @@ final class JobApplication
     );
   }
 
+  public static function recreate(JobApplicationId $id, CompanyName $comanpy, PositionName $position, AppliedAt $appliedAt): self
+  {
+    return new self(
+      $id,
+      $comanpy,
+      $position,
+      $appliedAt
+    );
+  }
+
   public function id(): JobApplicationId
   {
     return $this->id;

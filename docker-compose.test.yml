@@ -1,26 +1,23 @@
 services:
-  app:
+  app_test:
     build:
       context: .
       dockerfile: docker/php/Dockerfile.dev
     volumes:
       - ./symfony:/app
-    ports:
-      - "8000:8000"
-    command: php -S 0.0.0.0:8000 -t public
     environment:
-      APP_ENV: dev
+      APP_ENV: test
       XDEBUG_MODE: debug,coverage
     depends_on:
-      - db
-  db:
+      - db_test
+  db_test:
     image: postgres:18-alpine
     environment:
       POSTGRES_USER: symfony
       POSTGRES_PASSWORD: symfony
-      POSTGRES_DB: job_applications
+      POSTGRES_DB: job_applications_test
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U symfony -d job_applications"]
+      test: ["CMD-SHELL", "pg_isready -U symfony -d job_applications_test"]
       interval: 30s
       timeout: 10s
       retries: 10

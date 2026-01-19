@@ -28,6 +28,22 @@ final class JobApplicationTest extends TestCase
     $this->assertSame($appliedAt, $application->appliedAt());
   }
 
+  public function test_it_can_be_recreated(): void
+  {
+    $id = JobApplicationId::fromString('cb0aef80-c421-4f37-8b72-0d1c9a7fe177');
+    $company = new CompanyName('test company');
+    $position = new PositionName('Developer');
+    $appliedAt = new AppliedAt(new DateTimeImmutable('-1 day'));
+
+
+    $application = JobApplication::recreate($id, $company, $position, $appliedAt);
+
+    $this->assertSame($id, $application->id());
+    $this->assertSame($company, $application->company());
+    $this->assertSame($position, $application->position());
+    $this->assertSame($appliedAt, $application->appliedAt());
+  }
+
   public function test_it_can_return_valid_uuid(): void
   {
     $company = new CompanyName('test company');
