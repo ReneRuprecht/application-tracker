@@ -1,8 +1,8 @@
 services:
   app:
     build:
-      context: docker/php
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: docker/php/Dockerfile.dev
     volumes:
       - ./symfony:/app
     ports:
@@ -10,3 +10,4 @@ services:
     command: php -S 0.0.0.0:8000 -t public
     environment:
       APP_ENV: dev
+      XDEBUG_MODE: debug,coverage
