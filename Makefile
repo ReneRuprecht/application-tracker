@@ -55,3 +55,6 @@ test-all: test-unit test-integration
 coverage-server:
 	docker-compose run --rm -p $(COVERAGE_PORT):$(COVERAGE_PORT) $(APP_CONTAINER) \
 		php -S 0.0.0.0:$(COVERAGE_PORT) -t var/coverage/unit
+
+lint:
+	docker-compose -f docker-compose.yml run --rm $(APP_CONTAINER) vendor/bin/php-cs-fixer fix --dry-run --diff
