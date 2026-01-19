@@ -11,26 +11,26 @@ use App\Infrastructure\Doctrine\JobApplicationOrm;
 
 final class JobApplicationMapper
 {
-  public static function toOrm(JobApplication $domain): JobApplicationOrm
-  {
-    $orm = new JobApplicationOrm();
-    $orm->id = (string) $domain->id()->value();
-    $orm->company = $domain->company()->value();
-    $orm->position = $domain->position()->value();
-    $orm->appliedAt = $domain->appliedAt()->value();
+    public static function toOrm(JobApplication $domain): JobApplicationOrm
+    {
+        $orm = new JobApplicationOrm();
+        $orm->id = (string) $domain->id()->value();
+        $orm->company = $domain->company()->value();
+        $orm->position = $domain->position()->value();
+        $orm->appliedAt = $domain->appliedAt()->value();
 
-    return $orm;
-  }
+        return $orm;
+    }
 
-  public static function toDomain(JobApplicationOrm $orm): JobApplication
-  {
-    $domain = JobApplication::recreate(
-      JobApplicationId::fromString($orm->id),
-      new CompanyName($orm->company),
-      new PositionName($orm->position),
-      new AppliedAt($orm->appliedAt)
-    );
+    public static function toDomain(JobApplicationOrm $orm): JobApplication
+    {
+        $domain = JobApplication::recreate(
+            JobApplicationId::fromString($orm->id),
+            new CompanyName($orm->company),
+            new PositionName($orm->position),
+            new AppliedAt($orm->appliedAt)
+        );
 
-    return $domain;
-  }
+        return $domain;
+    }
 }

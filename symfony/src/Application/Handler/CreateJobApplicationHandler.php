@@ -11,17 +11,20 @@ use App\Domain\ValueObject\PositionName;
 
 final class CreateJobApplicationHandler
 {
-  public function __construct(private JobApplicationRepositoryInterface $repositoy) {}
-  public function __invoke(CreateJobApplicationCommand $command): string
-  {
-    $jobApplication = JobApplication::create(
-      new CompanyName($command->company),
-      new PositionName($command->position),
-      new AppliedAt($command->appliedAt)
-    );
+    public function __construct(private JobApplicationRepositoryInterface $repositoy)
+    {
+    }
 
-    $this->repositoy->save($jobApplication);
+    public function __invoke(CreateJobApplicationCommand $command): string
+    {
+        $jobApplication = JobApplication::create(
+            new CompanyName($command->company),
+            new PositionName($command->position),
+            new AppliedAt($command->appliedAt)
+        );
 
-    return $jobApplication->id()->value();
-  }
+        $this->repositoy->save($jobApplication);
+
+        return $jobApplication->id()->value();
+    }
 }

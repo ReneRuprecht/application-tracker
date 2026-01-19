@@ -9,24 +9,25 @@ use App\Domain\ValueObject\JobApplicationId;
 
 final class GetJobApplicationHandler
 {
-
-  public function __construct(private JobApplicationRepositoryInterface $repository) {}
-
-  public function __invoke(GetJobApplicationQuery $query): ?JobApplication
-  {
-    $jobApplication = $this->repository->findById(
-      JobApplicationId::fromString($query->id)
-    );
-
-    if ($jobApplication == null) {
-      return null;
+    public function __construct(private JobApplicationRepositoryInterface $repository)
+    {
     }
 
-    return JobApplication::recreate(
-      $jobApplication->id(),
-      $jobApplication->company(),
-      $jobApplication->position(),
-      $jobApplication->appliedAt()
-    );
-  }
+    public function __invoke(GetJobApplicationQuery $query): ?JobApplication
+    {
+        $jobApplication = $this->repository->findById(
+            JobApplicationId::fromString($query->id)
+        );
+
+        if (null == $jobApplication) {
+            return null;
+        }
+
+        return JobApplication::recreate(
+            $jobApplication->id(),
+            $jobApplication->company(),
+            $jobApplication->position(),
+            $jobApplication->appliedAt()
+        );
+    }
 }

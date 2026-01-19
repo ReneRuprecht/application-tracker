@@ -58,3 +58,6 @@ coverage-server:
 
 lint:
 	docker-compose -f docker-compose.yml run --rm $(APP_CONTAINER) vendor/bin/php-cs-fixer fix --dry-run --diff
+
+cs-fix:
+	docker-compose -f docker-compose.yml run --rm $(APP_CONTAINER) vendor/bin/php-cs-fixer fix

@@ -9,92 +9,91 @@ use App\Domain\ValueObject\JobApplicationId;
 use App\Domain\ValueObject\PositionName;
 use App\Infrastructure\DB\PostgresJobApplicationRepository;
 use App\Kernel;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 
 final class PostgresJobApplicationRepositoryTest extends TestCase
 {
-  private EntityManagerInterface $em;
-  private PostgresJobApplicationRepository $repository;
+    private EntityManagerInterface $em;
+    private PostgresJobApplicationRepository $repository;
 
-  protected function setUp(): void
-  {
-    $kernel = new Kernel('test', true);
-    $kernel->boot();
+    protected function setUp(): void
+    {
+        $kernel = new Kernel('test', true);
+        $kernel->boot();
 
-    $this->em = $kernel->getContainer()->get('doctrine')->getManager();
-    $this->repository = new PostgresJobApplicationRepository($this->em);
+        $this->em = $kernel->getContainer()->get('doctrine')->getManager();
+        $this->repository = new PostgresJobApplicationRepository($this->em);
 
-    $this->cleanUp();
-  }
-  private function cleanUp(): void
-  {
-    $connection = $this->em->getConnection();
-    $platform = $connection->getDatabasePlatform();
-    $connection->executeStatement($platform->getTruncateTableSQL('job_applications', true));
-  }
+        $this->cleanUp();
+    }
 
-  protected function tearDown(): void
-  {
-    parent::tearDown();
-    $this->em->close();
-    unset($this->em);
-  }
+    private function cleanUp(): void
+    {
+        $connection = $this->em->getConnection();
+        $platform = $connection->getDatabasePlatform();
+        $connection->executeStatement($platform->getTruncateTableSQL('job_applications', true));
+    }
 
-  public function test_it_saves_job_application(): void
-  {
-    $date = new DateTimeImmutable('2025-01-01');
-    $application = JobApplication::create(new CompanyName('test company'), new PositionName('dev'), new AppliedAt($date));
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        $this->em->close();
+        unset($this->em);
+    }
 
-    $this->repository->save($application);
+    public function testItSavesJobApplication(): void
+    {
+        $date = new \DateTimeImmutable('2025-01-01');
+        $application = JobApplication::create(new CompanyName('test company'), new PositionName('dev'), new AppliedAt($date));
 
-    $fetched = $this->repository->findById($application->id());
+        $this->repository->save($application);
 
-    $this->assertNotNull($fetched);
-    $this->assertSame('test company', $fetched->company()->value());
-    $this->assertSame('dev', $fetched->position()->value());
-    $this->assertSame($date, $fetched->appliedAt()->value());
-  }
+        $fetched = $this->repository->findById($application->id());
 
-  public function test_it_returns_job_application_by_id_if_present(): void
-  {
-    $date = new DateTimeImmutable('2025-01-01');
-    $application = JobApplication::create(new CompanyName('test company'), new PositionName('dev'), new AppliedAt($date));
+        $this->assertNotNull($fetched);
+        $this->assertSame('test company', $fetched->company()->value());
+        $this->assertSame('dev', $fetched->position()->value());
+        $this->assertSame($date, $fetched->appliedAt()->value());
+    }
 
-    $this->repository->save($application);
+    public function testItReturnsJobApplicationByIdIfPresent(): void
+    {
+        $date = new \DateTimeImmutable('2025-01-01');
+        $application = JobApplication::create(new CompanyName('test company'), new PositionName('dev'), new AppliedAt($date));
 
-    $fetched = $this->repository->findById($application->id());
+        $this->repository->save($application);
 
-    $this->assertNotNull($fetched);
-    $this->assertNotNull($fetched->id());
-    $this->assertSame('test company', $fetched->company()->value());
-    $this->assertSame('dev', $fetched->position()->value());
-    $this->assertSame($date, $fetched->appliedAt()->value());
-  }
+        $fetched = $this->repository->findById($application->id());
 
-  public function test_it_returns_null_if_id_not_present(): void
-  {
-    $id = JobApplicationId::fromString("cb0aef80-c421-4f37-8b72-0d1c9a7fe177");
+        $this->assertNotNull($fetched);
+        $this->assertNotNull($fetched->id());
+        $this->assertSame('test company', $fetched->company()->value());
+        $this->assertSame('dev', $fetched->position()->value());
+        $this->assertSame($date, $fetched->appliedAt()->value());
+    }
 
-    $fetched = $this->repository->findById($id);
+    public function testItReturnsNullIfIdNotPresent(): void
+    {
+        $id = JobApplicationId::fromString('cb0aef80-c421-4f37-8b72-0d1c9a7fe177');
 
-    $this->assertNull($fetched);
-  }
+        $fetched = $this->repository->findById($id);
 
-  public function test_it_returns_all_job_applications_if_present(): void
-  {
+        $this->assertNull($fetched);
+    }
 
-    $date = new DateTimeImmutable('2025-01-01');
+    public function testItReturnsAllJobApplicationsIfPresent(): void
+    {
+        $date = new \DateTimeImmutable('2025-01-01');
 
-    $application1 = JobApplication::create(new CompanyName('test company'), new PositionName('dev'), new AppliedAt($date));
-    $application2 = JobApplication::create(new CompanyName('test company2'), new PositionName('fullstack'), new AppliedAt($date));
+        $application1 = JobApplication::create(new CompanyName('test company'), new PositionName('dev'), new AppliedAt($date));
+        $application2 = JobApplication::create(new CompanyName('test company2'), new PositionName('fullstack'), new AppliedAt($date));
 
-    $this->repository->save($application1);
-    $this->repository->save($application2);
+        $this->repository->save($application1);
+        $this->repository->save($application2);
 
-    $all = $this->repository->findAll();
+        $all = $this->repository->findAll();
 
-    $this->assertCount(2, $all);
-  }
+        $this->assertCount(2, $all);
+    }
 }

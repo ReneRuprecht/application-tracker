@@ -10,44 +10,42 @@ use App\Domain\ValueObject\CompanyName;
 use App\Domain\ValueObject\JobApplicationId;
 use App\Domain\ValueObject\PositionName;
 use App\Infrastructure\DB\InMemoryJobApplicationRepository;
-use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 final class GetJobApplicationHandlerTest extends TestCase
 {
+    public function testItReturnsJobApplicationIfExists(): void
+    {
+        $repo = new InMemoryJobApplicationRepository();
 
+        $date = new \DateTimeImmutable();
 
-  public function test_it_returns_job_application_if_exists(): void
-  {
-    $repo = new InMemoryJobApplicationRepository();
+        $application = JobApplication::create(
+            new CompanyName('test company'),
+            new PositionName('dev'),
+            new AppliedAt($date)
+        );
+        $repo->save($application);
 
-    $date = new DateTimeImmutable();
+        $handler = new GetJobApplicationHandler($repo);
+        $query = new GetJobApplicationQuery($application->id()->value());
 
-    $application = JobApplication::create(
-      new CompanyName('test company'),
-      new PositionName('dev'),
-      new AppliedAt($date)
-    );
-    $repo->save($application);
+        $result = $handler($query);
 
-    $handler = new GetJobApplicationHandler($repo);
-    $query = new GetJobApplicationQuery($application->id()->value());
+        $this->assertSame('test company', $result->company()->value());
+        $this->assertSame('dev', $result->position()->value());
+        $this->assertSame($date, $result->appliedAt()->value());
+        $this->assertNotNull($result->id());
+    }
 
-    $result = $handler($query);
+    public function testItReturnsNullIfNotFound(): void
+    {
+        $repo = new InMemoryJobApplicationRepository();
+        $handler = new GetJobApplicationHandler($repo);
 
-    $this->assertSame('test company', $result->company()->value());
-    $this->assertSame('dev', $result->position()->value());
-    $this->assertSame($date, $result->appliedAt()->value());
-    $this->assertNotNull($result->id());
-  }
-  public function test_it_returns_null_if_not_found(): void
-  {
-    $repo = new InMemoryJobApplicationRepository();
-    $handler = new GetJobApplicationHandler($repo);
+        $query = new GetJobApplicationQuery(JobApplicationId::generate()->value());
+        $result = $handler($query);
 
-    $query = new GetJobApplicationQuery(JobApplicationId::generate()->value());
-    $result = $handler($query);
-
-    $this->assertNull($result);
-  }
+        $this->assertNull($result);
+    }
 }

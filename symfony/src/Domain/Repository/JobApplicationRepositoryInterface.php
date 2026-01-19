@@ -7,9 +7,10 @@ use App\Domain\ValueObject\JobApplicationId;
 
 interface JobApplicationRepositoryInterface
 {
-  public function save(JobApplication $jobApplication): void;
-  public function findById(JobApplicationId $id): ?JobApplication;
+    public function save(JobApplication $jobApplication): void;
 
-  /** @return JobApplication[] */
-  public function findAll(): array;
+    public function findById(JobApplicationId $id): ?JobApplication;
+
+    /** @return JobApplication[] */
+    public function findAll(): array;
 }
