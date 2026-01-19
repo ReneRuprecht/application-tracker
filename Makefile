@@ -61,3 +61,6 @@ lint:
 
 cs-fix:
 	docker-compose -f docker-compose.yml run --rm $(APP_CONTAINER) vendor/bin/php-cs-fixer fix
+
+analyse:
+	docker-compose -f docker-compose.yml run --rm $(APP_CONTAINER) vendor/bin/phpstan analyse src tests --level max
