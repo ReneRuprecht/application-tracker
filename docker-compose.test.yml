@@ -1,5 +1,5 @@
 services:
-  app_test:
+  php_test:
     build:
       context: .
       dockerfile: docker/php/Dockerfile.dev
