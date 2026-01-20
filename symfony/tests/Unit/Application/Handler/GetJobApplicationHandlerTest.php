@@ -32,10 +32,11 @@ final class GetJobApplicationHandlerTest extends TestCase
 
         $result = $handler($query);
 
+        $this->assertNotNull($result);
         $this->assertSame('test company', $result->company()->value());
         $this->assertSame('dev', $result->position()->value());
         $this->assertSame($date, $result->appliedAt()->value());
-        $this->assertNotNull($result->id());
+        $this->assertNotSame('', $result->id()->value());
     }
 
     public function testItReturnsNullIfNotFound(): void

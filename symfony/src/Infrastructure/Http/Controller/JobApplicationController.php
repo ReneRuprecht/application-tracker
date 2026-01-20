@@ -7,6 +7,7 @@ use App\Application\Handler\CreateJobApplicationHandler;
 use App\Application\Handler\GetJobApplicationHandler;
 use App\Application\Handler\ListJobApplicationHandler;
 use App\Application\Query\GetJobApplicationQuery;
+use App\Infrastructure\Http\Dto\CreateJobApplicationRequestDto;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,12 +19,15 @@ final class JobApplicationController extends AbstractController
     #[Route('', methods: ['POST'])]
     public function create(Request $request, CreateJobApplicationHandler $handler): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        $data = $request->toArray();
+
+        /** @var array{company: string, position: string, appliedAt: string} $data */
+        $dto = CreateJobApplicationRequestDto::fromArray($data);
 
         $command = new CreateJobApplicationCommand(
-            company: $data['company'],
-            position: $data['position'],
-            appliedAt: new \DateTimeImmutable($data['appliedAt'])
+            company: $dto->company,
+            position: $dto->position,
+            appliedAt: $dto->appliedAt
         );
 
         $id = $handler($command);

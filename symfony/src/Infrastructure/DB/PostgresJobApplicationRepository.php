@@ -29,6 +29,9 @@ final class PostgresJobApplicationRepository implements JobApplicationRepository
         return $orm ? JobApplicationMapper::toDomain($orm) : null;
     }
 
+    /**
+     * @return JobApplication[]
+     */
     public function findAll(): array
     {
         $orms = $this->em

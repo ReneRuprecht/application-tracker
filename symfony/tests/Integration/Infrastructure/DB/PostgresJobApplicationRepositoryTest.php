@@ -10,6 +10,7 @@ use App\Domain\ValueObject\PositionName;
 use App\Infrastructure\DB\PostgresJobApplicationRepository;
 use App\Kernel;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
 
 final class PostgresJobApplicationRepositoryTest extends TestCase
@@ -22,7 +23,13 @@ final class PostgresJobApplicationRepositoryTest extends TestCase
         $kernel = new Kernel('test', true);
         $kernel->boot();
 
-        $this->em = $kernel->getContainer()->get('doctrine')->getManager();
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $kernel->getContainer()->get('doctrine');
+
+        /** @var EntityManagerInterface $em */
+        $em = $doctrine->getManager();
+        $this->em = $em;
+
         $this->repository = new PostgresJobApplicationRepository($this->em);
 
         $this->cleanUp();
@@ -67,7 +74,7 @@ final class PostgresJobApplicationRepositoryTest extends TestCase
         $fetched = $this->repository->findById($application->id());
 
         $this->assertNotNull($fetched);
-        $this->assertNotNull($fetched->id());
+        $this->assertNotSame('', $fetched->id()->value());
         $this->assertSame('test company', $fetched->company()->value());
         $this->assertSame('dev', $fetched->position()->value());
         $this->assertSame($date, $fetched->appliedAt()->value());

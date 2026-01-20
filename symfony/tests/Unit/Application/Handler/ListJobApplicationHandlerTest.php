@@ -40,12 +40,12 @@ final class ListJobApplicationHandlerTest extends TestCase
         $this->assertSame('1', $application1->company()->value());
         $this->assertSame('A', $application1->position()->value());
         $this->assertSame($date, $application1->appliedAt()->value());
-        $this->assertNotNull($application1->id());
+        $this->assertNotSame('', $application1->id()->value());
 
         $this->assertSame('2', $application2->company()->value());
         $this->assertSame('B', $application2->position()->value());
         $this->assertSame($date, $application2->appliedAt()->value());
-        $this->assertNotNull($application2->id());
+        $this->assertNotSame('', $application2->id()->value());
     }
 
     public function testItReturnsEmptyArrayIfNoApplications(): void

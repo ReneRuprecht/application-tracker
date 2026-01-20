@@ -10,6 +10,9 @@ final class ListJobApplicationHandler
     {
     }
 
+    /**
+     * @return array<int, array{id: string, company: string, position: string, appliedAt: string}>
+     */
     public function __invoke(): array
     {
         $result = [];

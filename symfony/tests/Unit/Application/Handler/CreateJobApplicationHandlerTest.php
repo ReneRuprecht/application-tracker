@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 final class CreateJobApplicationHandlerTest extends TestCase
 {
-    public function testItSavesJobApplication()
+    public function testItSavesJobApplication(): void
     {
         $repo = new InMemoryJobApplicationRepository();
         $handler = new CreateJobApplicationHandler($repo);
@@ -28,7 +28,7 @@ final class CreateJobApplicationHandlerTest extends TestCase
 
         $application = $jobApplications[0];
 
-        $this->assertNotNull($application->id());
+        $this->assertNotSame('', $application->id()->value());
         $this->assertsame('test company', $application->company()->value());
         $this->assertsame('dev', $application->position()->value());
         $this->assertsame($date, $application->appliedAt()->value());
